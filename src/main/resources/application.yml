@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: hospital-appointments
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hospitaldb
+    username: hospital
+    password: hospital
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
