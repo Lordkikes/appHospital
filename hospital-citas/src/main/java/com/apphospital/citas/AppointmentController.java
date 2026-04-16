@@ -1,0 +1,5 @@
+package com.apphospital.citas;
+import com.apphospital.shared.ShiftStatus; import org.springframework.web.bind.annotation.*; import java.time.OffsetDateTime; import java.util.*;
+record CreateAppointmentRequest(UUID patientId,UUID doctorId,UUID nurseId,OffsetDateTime startAt,OffsetDateTime endAt,String notes){}
+@RestController @RequestMapping("/api/citas")
+public class AppointmentController { private final AppointmentRepository repo; private final AppointmentKafkaPublisher publisher; public AppointmentController(AppointmentRepository repo,AppointmentKafkaPublisher publisher){this.repo=repo;this.publisher=publisher;} @PostMapping public AppointmentEntity create(@RequestBody CreateAppointmentRequest r){ AppointmentEntity e=new AppointmentEntity(); e.id=UUID.randomUUID(); e.patientId=r.patientId(); e.doctorId=r.doctorId(); e.nurseId=r.nurseId(); e.startAt=r.startAt(); e.endAt=r.endAt(); e.status=ShiftStatus.PROGRAMADA; e.notes=r.notes(); AppointmentEntity saved=repo.save(e); publisher.publishCreated(saved); return saved;} @GetMapping public List<AppointmentEntity> list(){return repo.findAll();}}
